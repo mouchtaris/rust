@@ -2,13 +2,11 @@ mod fmap;
 mod option;
 mod rebind;
 mod range;
+mod flat_map;
 use ::fmap::*;
 use ::option::*;
 use ::range::*;
-
-
-
-
+use ::flat_map::*;
 
 
 fn main() {
@@ -24,6 +22,9 @@ fn main() {
     let cmm = cm.fmap(rnext);
     let cmmm = cmm.fmap(rnext);
 
+    let fatf: fn(i32) -> Optian<i32> = |x: i32| Optian::Some(x + 2);
+    let afm = a.flat_map(fatf);
+
     println!("{:?}", a);
     println!("{:?}", am);
     println!("{:?}", b);
@@ -32,5 +33,6 @@ fn main() {
     println!("{:?}", cm);
     println!("{:?}", cmm);
     println!("{:?}", cmmm);
+    println!("{:?}", afm);
     println!("Hello, world!");
 }
