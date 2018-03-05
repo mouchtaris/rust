@@ -1,4 +1,4 @@
-use rebind::Rebind;
+use rebind::*;
 
 pub trait FMap<U>
     where Self: Rebind<U>,
