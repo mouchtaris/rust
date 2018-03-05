@@ -3,35 +3,42 @@ mod option;
 mod rebind;
 mod range;
 mod flat_map;
-use ::fmap::*;
-use ::option::*;
-use ::range::*;
-use ::flat_map::*;
-use ::rebind::*;
+use ::rebind::Rebind;
+use ::option::Optian;
+use ::range::Range;
+use ::fmap::FMap;
+use ::flat_map::FlatMap;
 
-trait Pure {
+pub trait Pure {
     fn pure_point<T>(obj: T) -> <Self as Rebind<T>>::Type
         where Self: Rebind<T>
         ;
 }
 
-impl<T> Pure for Optian<T> {
-    fn pure_point<U>(obj: U) -> <Optian<T> as Rebind<U>>::Type
-        { Optian::Some(obj) }
+
+impl<U> Pure for Optian<U> {
+    fn pure_point<T>(obj: T) -> <Optian<U> as Rebind<T>>::Type
+    {
+        Optian::Some(obj)
+    }
 }
 
-// impl<S, U> FMap<U> for S
-//     where Self: FlatMap<U>,
-//           Self: Pure,
-//           Self::Element: Copy,
-//           Self::Type: Copy
-// {
-//     fn fmap(&self, f: fn(Self::Element) -> U) -> Self::Type {
-//     }
-// }
+impl<S, U> FMap<U> for S
+    where Self: FlatMap<U>,
+          Self: Pure,
+          Self::Element: Copy,
+          Self::Type: Copy
+{
+    fn fmap<F>(&self, f: F) -> Self::Type
+        where F: FnOnce(Self::Element) -> U
+    {
+        self.flat_map(|elem| Self::pure_point(f(elem)))
+    }
+}
+
+
 
 fn main() {
-    let z = Optian::<i32>::pure_point(18);
     let a = Optian::Some(12);
     let b = Optian::None::<i32>;
     let f: fn(i32) -> i32 = |x: i32| -> i32 { x + 1 };
