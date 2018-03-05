@@ -1,6 +1,6 @@
 mod rebind;
-//mod fmap;
 mod flat_map;
+mod pure_point;
 
 #[derive(Debug, Copy, Clone)]
 pub enum Optian<T> {

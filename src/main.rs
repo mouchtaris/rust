@@ -3,40 +3,13 @@ mod option;
 mod rebind;
 mod range;
 mod flat_map;
+mod pure_point;
 use ::rebind::Rebind;
 use ::option::Optian;
 use ::range::Range;
 use ::fmap::FMap;
 use ::flat_map::FlatMap;
-
-pub trait Pure {
-    fn pure_point<T>(obj: T) -> <Self as Rebind<T>>::Type
-        where Self: Rebind<T>
-        ;
-}
-
-
-impl<U> Pure for Optian<U> {
-    fn pure_point<T>(obj: T) -> <Optian<U> as Rebind<T>>::Type
-    {
-        Optian::Some(obj)
-    }
-}
-
-impl<S, U> FMap<U> for S
-    where Self: FlatMap<U>,
-          Self: Pure,
-          Self::Element: Copy,
-          Self::Type: Copy
-{
-    fn fmap<F>(&self, f: F) -> Self::Type
-        where F: FnOnce(Self::Element) -> U
-    {
-        self.flat_map(|elem| Self::pure_point(f(elem)))
-    }
-}
-
-
+use ::pure_point::PurePoint;
 
 fn main() {
     let a = Optian::Some(12);

@@ -1,3 +1,4 @@
+mod from_flat_map;
 use ::rebind::Rebind;
 
 pub trait FMap<U>
