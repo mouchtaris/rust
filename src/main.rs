@@ -1,26 +1,13 @@
 mod fmap;
 mod option;
 mod rebind;
+mod range;
 use ::fmap::*;
 use ::option::*;
+use ::range::*;
 
 
-#[derive(Debug)]
-struct Range {
-    from    : i32,
-    to      : i32,
-    step    : i32,
-}
 
-impl std::clone::Clone for Range {
-    fn clone(&self) -> Self {
-        Range { .. *self }
-    }
-}
-impl Copy for Range { }
-impl Range {
-    fn next(&self) -> Range { Range { from: self.from + self.step, .. *self } }
-}
 
 
 
