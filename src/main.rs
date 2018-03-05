@@ -7,10 +7,32 @@ use ::fmap::*;
 use ::option::*;
 use ::range::*;
 use ::flat_map::*;
+use ::rebind::*;
 
+trait Pure {
+    fn pure_point<T>(obj: T) -> <Self as Rebind<T>>::Type
+        where Self: Rebind<T>
+        ;
+}
+
+impl<T> Pure for Optian<T> {
+    fn pure_point<U>(obj: U) -> <Optian<T> as Rebind<U>>::Type
+        { Optian::Some(obj) }
+}
+
+// impl<S, U> FMap<U> for S
+//     where Self: FlatMap<U>,
+//           Self: Pure,
+//           Self::Element: Copy,
+//           Self::Type: Copy
+// {
+//     fn fmap(&self, f: fn(Self::Element) -> U) -> Self::Type {
+//     }
+// }
 
 fn main() {
-    let a = Optian::Some::<i32>(12);
+    let z = Optian::<i32>::pure_point(18);
+    let a = Optian::Some(12);
     let b = Optian::None::<i32>;
     let f: fn(i32) -> i32 = |x: i32| -> i32 { x + 1 };
     let am = a.fmap(f);
