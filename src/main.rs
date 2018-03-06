@@ -4,69 +4,38 @@ mod rebind;
 mod range;
 mod flat_map;
 mod pure_point;
+mod traversable;
+mod for_each;
+mod element;
 use ::rebind::Rebind;
 use ::option::Optian;
 use ::range::Range;
 use ::fmap::FMap;
 use ::flat_map::FlatMap;
 use ::pure_point::PurePoint;
+use ::traversable::Traversable;
+use ::for_each::ForEach;
+use ::element::Element;
 
-
-pub trait Iter
-    where Self: Sized
+impl Element for (i32, i32)
+    where Self: Traversable
 {
-    type Element;
-    fn next(&self) -> Optian<(Self, Self::Element)>;
+    type Element = i32;
 }
 
-
-pub struct ABC
+impl Traversable for (i32, i32)
 {
-    a: i32,
-    b: i32,
-    c: i32
-}
-mod ABCIter {
-    use ::ABC;
-    use ::option::Optian;
-    use ::fmap::FMap;
-    #[derive(Clone,Copy)]
-    enum State { a, b, c, e }
-    pub struct Iter<'a> { src: &'a ABC, state: State }
-    impl<'a> ::std::clone::Clone for Iter<'a>
+    fn next(&self) -> Optian<((i32, i32), i32)>
     {
-        fn clone(&self) -> Self
-        {
-            Iter { .. *self }
+        if self.0 > self.1 {
+            return Optian::None;
         }
+        return Optian::Some(((self.0 + 1, self.1), self.0));
     }
-    impl<'a> ::std::marker::Copy for Iter<'a>
-    {
-    }
-    impl <'a> ::Iter for Iter<'a>
-    {
-        type Element = i32;
-        fn next(&self) -> Optian<(Iter<'a>, i32)>
-        {
-            let (nextState, maybeValue) = match self.state {
-                State::a => (State::b, Optian::Some(self.src.a)),
-                State::b => (State::c, Optian::Some(self.src.b)),
-                State::c => (State::e, Optian::Some(self.src.c)),
-                State::e => (State::e, Optian::None)
-            };
-            maybeValue.fmap(|v| {
-                let nextSelf = Iter { src: self.src, state: nextState };
-                (nextSelf, v)
-            })
-        }
-    }
-    pub fn create(src: &ABC) -> Iter { Iter { src, state: State::a } }
 }
 
-impl ABC
-{
-    fn iter<'a>(&'a self) -> ABCIter::Iter<'a> { ABCIter::create(self) }
-}
+
+
 
 
 fn main() {
@@ -94,5 +63,9 @@ fn main() {
     println!("{:?}", cmm);
     println!("{:?}", cmmm);
     println!("{:?}", afm);
+
+    let ti32: (i32, i32) = (12, 34);
+    let pln = |x| println!("{:?}", x);
+    ti32.for_each(pln);
     println!("Hello, world!");
 }
