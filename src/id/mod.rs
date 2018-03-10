@@ -3,6 +3,6 @@ use ::std::marker::PhantomData;
 
 #[derive(Debug)]
 pub struct Id<T>(
-    u32,
+    pub u32,
     PhantomData<T>,
 );
